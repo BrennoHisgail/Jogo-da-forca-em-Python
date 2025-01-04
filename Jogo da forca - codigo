@@ -1,0 +1,97 @@
+import os
+import random
+import getpass
+
+def jogar():
+    print('Olá! Seja bem-vindo ao jogo da forca!')
+    print('Escolha um modo de jogo: ')
+    print('1. Jogar sozinho (palavra gerada aleatóriamente)')
+    print('2. Jogar com outra pessoa (um dos dois escolhe a palavra)')
+
+    modo = input('Digite [1] ou [2]: ')
+    os.system('cls')
+
+    if modo == '1':
+        palavras = ['figueirense','matematica','fobia','cachorro','computador','programar','acariciar','compras','geladeira']
+        palavra_secreta = random.choice(palavras)
+        print('Você escolheu jogar sozinho!')
+        print('Vamos começar! Você possuí 6 chances de acertar a palavra! Desconsidere acentuação.')
+        estado_palavra = ['_'] * len(palavra_secreta)
+        print('A palavra tem {} letras: {}'.format(len(palavra_secreta), ''.join(estado_palavra)), )
+        tentativas_restantes = 6
+        letras_erradas = []
+        while tentativas_restantes > 0 and '_' in estado_palavra:
+            print('\nVocê {} tentavias restantes.'.format(tentativas_restantes))
+            print('Letras erradas: {}'.format(','.join(letras_erradas)))
+            print('Palavra: {}'.format(' '.join(estado_palavra)))
+
+            letra = input('Digite uma letra: ').lower()
+
+            os.system('cls')
+
+            # Validação da entrada
+            if len(letra) != 1 or not letra.isalpha():
+                print('Por favor, digite apenas uma única letra.')
+                continue
+            if letra in letras_erradas or letra in estado_palavra:
+                print('Você já tentou essa letra. Tente uma diferente!')
+                continue
+            # Processar a letra
+            if letra in palavra_secreta:
+                for i, l in enumerate(palavra_secreta):  # Atualizar estado_palavra com as posições corretas da letra
+                    if l == letra:
+                        estado_palavra[i] = letra
+            else:  # Reduzir tentativas e registrar a letra errada
+                tentativas_restantes -= 1
+                letras_erradas.append(letra)
+
+        if "_" not in estado_palavra:
+            print('\nParabéns! Você ganhou! A palavra era: "{}".'.format(palavra_secreta))
+        else:
+            print('\nVocê perdeu! A palavra era: "{}"'.format(palavra_secreta))
+
+    elif modo == '2':
+        print('Você escolheu jogar com outra pessoa!')
+        palavra_secreta = getpass.getpass('Vamos começar! Jogador 1, digite qual será a palavra secreta: ').lower()
+        os.system('cls' if os.name == 'nt' else 'clear')  # Limpeza de tela que funciona em Windows, Mac, etc
+        print('\nAgora é sua vez, jogador 2! Tente adivinhar a palavra secreta!\nVocê possui 6 chances! Desconsidere acentuação')
+        # Estado inicial da palavra
+        estado_palavra = ['_'] * len(palavra_secreta)
+        tentativas_restantes = 6
+        letras_erradas = []
+
+        while tentativas_restantes > 0 and '_' in estado_palavra:
+            print('\nVocê tem {} tentativas restantes.'.format(tentativas_restantes))
+            print('Letras erradas: {}'.format(','.join(letras_erradas)))
+            print('Palavra: {}'.format(' '.join(estado_palavra)))
+
+            letra = input('Digite uma letra: ').lower()
+            # Validação da entrada
+            if len(letra) != 1 or not letra.isalpha():
+                print('Por favor, digite apenas uma única letra.')
+                continue
+            if letra in letras_erradas or letra in estado_palavra:
+                print('Você já tentou essa letra. Tente uma diferente!')
+                continue
+
+            if letra in palavra_secreta:
+                for i, l in enumerate(palavra_secreta):
+                    if l == letra:
+                        estado_palavra[i] = letra
+            else:
+                tentativas_restantes -= 1
+                letras_erradas.append(letra)
+
+        if "_" not in estado_palavra:
+            print("\nParabéns, você ganhou! A palavra era '{}'.".format(palavra_secreta))
+        else:
+            print("\nVocê perdeu! A palavra era '{}'.".format(palavra_secreta))
+
+    else:
+        print('Opção inválida! Reinicie o jogo.')
+        jogar()  # Chama novamente a função se a opção for inválida
+
+# Começar o jogo
+jogar()
+
+input('Pressione Enter para sair...')
